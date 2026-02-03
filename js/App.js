@@ -4,7 +4,7 @@ import { React, ReactDOM, html } from './deps.js';
 const { useState, useEffect, useRef } = React;
 
 // Import Modules
-import BoardModule from './modules/BoardModule.js';
+import BoardModule from './modules/BoardModule.js?v=2';
 import CertificatesModule from './modules/CertificatesModule.js';
 import MediaModule from './modules/MediaModule.js';
 

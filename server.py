@@ -29,11 +29,18 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         
         # Caching Strategy
         # API endpoints: No caching (always fresh data)
-        # Static files: Cache for 1 hour (3600 seconds)
+        # Media files (Images, PDFs, Videos): Cache for 1 hour
+        # Code (JS, HTML, CSS): No-cache (force revalidation) to verify updates immediately
+        
+        media_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.webp', '.pdf', '.mp4', '.webm', '.ogg', '.mov')
+        
         if self.path.startswith('/api'):
             self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
-        else:
+        elif self.path.lower().endswith(media_extensions):
             self.send_header('Cache-Control', 'max-age=3600')
+        else:
+            # For JS/HTML/CSS, force the browser to check Last-Modified (304)
+            self.send_header('Cache-Control', 'no-cache')
             
         super().end_headers()
     
@@ -55,7 +62,10 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         elif parsed_path.path == '/' or parsed_path.path == '/index.html':
             self.path = '/index.html'
             
-        super().do_GET()
+        try:
+            super().do_GET()
+        except (BrokenPipeError, ConnectionResetError):
+            pass
 
     def handle_api_list(self, folder, allowed_exts):
         self.send_response(200)
@@ -76,8 +86,13 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             
             files.sort()
             self.wfile.write(json.dumps(files).encode())
+        except (BrokenPipeError, ConnectionResetError):
+            pass
         except Exception as e:
-            self.wfile.write(json.dumps({'error': str(e)}).encode())
+            try:
+                self.wfile.write(json.dumps({'error': str(e)}).encode())
+            except (BrokenPipeError, ConnectionResetError):
+                pass
 
 def run_server(port=8000):
     # Ensure folders exist
