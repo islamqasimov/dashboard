@@ -1,0 +1,199 @@
+:root {
+    --bg-dark: #0f1115;
+    --panel-bg: rgba(30, 34, 45, 0.7);
+    --accent: #6366f1;
+    --text-main: #e2e8f0;
+    --text-muted: #94a3b8;
+    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+    --shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    --font-main: 'Outfit', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-main);
+    height: 100vh;
+    overflow: hidden;
+    /* Sensual gradient background */
+    background: radial-gradient(circle at 10% 20%, rgb(20, 24, 30) 0%, rgb(10, 10, 15) 90%);
+}
+
+#root {
+    height: 100%;
+    width: 100%;
+    padding: 24px;
+}
+
+/* App Container Grid */
+.app-container {
+    display: grid;
+    grid-template-columns: 20% 1fr 1fr;
+    /* Default layout: Certs | Board | Media */
+    gap: 24px;
+    height: 100%;
+    width: 100%;
+    transition: all 0.5s ease;
+}
+
+/* Glassmorphism Panel Base */
+.module-panel {
+    background: var(--panel-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: var(--glass-border);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    /* Prevent grid blowout */
+}
+
+/* Resizer Handle */
+.resizer {
+    width: 10px;
+    cursor: col-resize;
+    position: relative;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.resizer::after {
+    content: "";
+    width: 4px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    transition: background 0.2s;
+}
+
+.resizer:hover::after,
+.resizer.active::after {
+    background: var(--accent);
+}
+
+/* Headers */
+.module-header {
+    padding: 16px 20px;
+    border-bottom: var(--glass-border);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.module-content {
+    flex: 1;
+    overflow: hidden;
+    /* Scroll handled internally by modules */
+    position: relative;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Utility Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Canvas responsiveness */
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Video specific */
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hidden-controls {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    /* Invisible interactive layer */
+}
+
+/* Status Indicator for gestures */
+.status-indicator {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.status-indicator.visible {
+    opacity: 1;
+}
+
+/* Loading Spinner */
+.loader {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--accent);
+    animation: spin 1s linear infinite;
+    margin: auto;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}

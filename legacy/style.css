@@ -1,0 +1,106 @@
+/* RESET */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* КРИТИЧЕСКИ ВАЖНО */
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* Запрещаем любой scroll на body */
+}
+
+/* ROOT */
+body {
+  background: #0e0e0e;
+  font-family: Arial, sans-serif;
+}
+
+/* MAIN LAYOUT */
+.container {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* Запрещаем overflow на контейнере */
+}
+
+/* FULLSCREEN контейнер */
+.container:-webkit-full-screen,
+.container:-moz-full-screen,
+.container:-ms-fullscreen,
+.container:fullscreen {
+  width: 100vw;
+  height: 100vh;
+}
+
+/* LEFT SIDE - Excel */
+.excel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  overflow: hidden;
+}
+
+/* iframe FORCE FULL SIZE */
+.excel iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* RIGHT SIDE - Certificates */
+.certs {
+  height: 100%;
+  padding: 20px;
+  background: #0e0e0e;
+  overflow: hidden; /* Важно для скрытия прокручиваемого контента */
+  position: relative;
+  cursor: grab; /* Курсор для драга */
+  user-select: none; /* Отключаем выделение текста при драге */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.certs:active {
+  cursor: grabbing;
+}
+
+/* FULLSCREEN СТИЛИ */
+.container:-webkit-full-screen .certs,
+.container:-moz-full-screen .certs,
+.container:-ms-fullscreen .certs,
+.container:fullscreen .certs {
+  height: 100vh;
+  width: 40vw;
+}
+
+/* SCROLL CONTAINER */
+.scroll-container {
+  position: absolute;
+  top: 0;
+  left: 20px;
+  right: 20px;
+  width: calc(100% - 40px);
+  transition: transform 0.016s linear; /* Плавность */
+}
+
+/* CERTIFICATE ITEMS */
+.cert-item {
+  width: 100%;
+}
+
+.cert-item img,
+.cert-item canvas {
+  width: 100%;
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}

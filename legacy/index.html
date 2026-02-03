@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="container">
+  <!-- LEFT: Excel -->
+  <div class="excel">
+    <iframe
+      src="https://azercell365-my.sharepoint.com/personal/nhuseynli_azercell_com/_layouts/15/Doc.aspx?sourcedoc={d46f4128-8eea-495e-a52b-e83fbec17cbd}&action=embedview&wdAllowInteractivity=False&wdHideGridlines=True&wdHideHeaders=True&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True"
+      frameborder="0">
+    </iframe>
+  </div>
+
+  <!-- RIGHT: Certificates -->
+  <div class="certs">
+    <!-- Сертификаты будут загружены динамически -->
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  // Настройка PDF.js
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  
+  // Проверяем что PDF.js загрузился
+  console.log("📚 PDF.js version:", pdfjsLib.version);
+  console.log("🔧 PDF.js worker:", pdfjsLib.GlobalWorkerOptions.workerSrc);
+</script>
+<script src="app.js"></script>
+
+</body>
+</html>
+
