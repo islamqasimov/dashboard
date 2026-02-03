@@ -26,25 +26,33 @@ ALLOWED_EXTENSIONS_VIDEO = {'.mp4', '.webm', '.ogg', '.mov'}
 class DashboardHandler(SimpleHTTPRequestHandler):
     def end_headers(self):
         self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate')
+        
+        # Caching Strategy
+        # API endpoints: No caching (always fresh data)
+        # Static files: Cache for 1 hour (3600 seconds)
+        if self.path.startswith('/api'):
+            self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        else:
+            self.send_header('Cache-Control', 'max-age=3600')
+            
         super().end_headers()
     
     def do_GET(self):
         parsed_path = urlparse(self.path)
         
         # API: Certificates
-        if parsed_path.path == '/api/certificates':
+        if parsed_path.path.rstrip('/') == '/api/certificates':
             self.handle_api_list(CERT_FOLDER, ALLOWED_EXTENSIONS_IMG | ALLOWED_EXTENSIONS_PDF)
             return
             
         # API: Videos (and Photos)
-        elif parsed_path.path == '/api/videos':
+        elif parsed_path.path.rstrip('/') == '/api/videos':
             # Combine video and image extensions for this module
             self.handle_api_list(VIDEO_FOLDER, ALLOWED_EXTENSIONS_VIDEO | ALLOWED_EXTENSIONS_IMG)
             return
 
         # Serve index.html for root
-        elif parsed_path.path == '/':
+        elif parsed_path.path == '/' or parsed_path.path == '/index.html':
             self.path = '/index.html'
             
         super().do_GET()

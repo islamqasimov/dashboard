@@ -5,7 +5,8 @@ export default function BoardModule() {
   // Default to a public read-only excalidraw or the one from user request
   // User said: "Uses Excali Draw read-only link"
   // We'll use a placeholder for now or a config.
-  const [url, setUrl] = useState("https://excalidraw.com/#room=449a8aa99db40d71ee97,KcPYqTVds2XJrrnqbeO39w");
+  // const [url, setUrl] = useState("https://excalidraw.com/#room=9417a478eaeeb08c8cc1,PcNdhCtBcifeQqV7Plc6hg");
+  const url = "https://excalidraw.com/#room=9417a478eaeeb08c8cc1,PcNdhCtBcifeQqV7Plc6hg";
 
   return html`
     <div className="module-header">
