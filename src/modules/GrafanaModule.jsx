@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function GrafanaModule() {
+export default function GrafanaModule({ dragProps }) {
     const [loading, setLoading] = useState(true);
     const grafanaUrl = import.meta.env.VITE_GRAFANA_URL || "";
     const isEnabled = grafanaUrl.length > 0;
@@ -14,7 +14,7 @@ export default function GrafanaModule() {
 
     return (
         <>
-            <div className="module-header">
+            <div className="module-header" {...dragProps}>
                 <span>Web Embed</span>
                 <span style={{ fontSize: '10px', opacity: 0.5 }}>{isEnabled ? 'Grafana / URL Proxy' : 'Disabled'}</span>
             </div>

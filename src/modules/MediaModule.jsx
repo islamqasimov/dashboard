@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-export default function MediaModule() {
+export default function MediaModule({ dragProps }) {
     const [mediaList, setMediaList] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(true);
@@ -9,6 +9,8 @@ export default function MediaModule() {
 
     const videoRef = useRef(null);
     const touchStart = useRef(null);
+    const wasSwipe = useRef(false);
+    const containerRef = useRef(null);
 
     useEffect(() => {
         fetch('/api/videos')
@@ -51,12 +53,27 @@ export default function MediaModule() {
     };
 
     const togglePlay = () => {
+        if (wasSwipe.current) {
+            wasSwipe.current = false;
+            return;
+        }
+
         setIsPlaying(p => !p);
         showFeedback(!isPlaying ? "PLAY" : "PAUSE");
 
         if (videoRef.current) {
             if (isPlaying) videoRef.current.pause();
             else videoRef.current.play();
+        }
+    };
+
+    const toggleFullscreen = () => {
+        if (!document.fullscreenElement) {
+            containerRef.current?.requestFullscreen?.().catch(err => {
+                console.error("Fullscreen error", err);
+            });
+        } else {
+            document.exitFullscreen?.();
         }
     };
 
@@ -75,7 +92,8 @@ export default function MediaModule() {
         const touchEnd = e.changedTouches[0].clientX;
         const diff = touchStart.current - touchEnd;
 
-        if (Math.abs(diff) > 50) {
+        if (Math.abs(diff) > 10) {
+            wasSwipe.current = true;
             if (diff > 0) {
                 nextMedia();
                 showFeedback("NEXT");
@@ -95,15 +113,17 @@ export default function MediaModule() {
 
     return (
         <>
-            <div className="module-header">
+            <div className="module-header" {...dragProps}>
                 <span>Media Gallery</span>
                 <span style={{ fontSize: '10px', opacity: 0.5 }}>{currentIndex + 1}/{mediaList.length}</span>
             </div>
             <div className="module-content"
+                ref={containerRef}
                 style={{ position: 'relative', height: '100%', background: 'black' }}
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
                 onClick={togglePlay}
+                onDoubleClick={toggleFullscreen}
             >
                 {isVideoFile(currentItem) ? (
                     <video

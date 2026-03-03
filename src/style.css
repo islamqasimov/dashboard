@@ -1,10 +1,7 @@
 :root {
     --bg-dark: #09090b;
-    /* Very dark background */
     --panel-bg: rgba(15, 15, 20, 0.85);
-    /* Dark solid-ish panels */
     --accent: #cba6f7;
-    /* Hyprland standard purple/pink accent */
     --accent-glow: rgba(203, 166, 247, 0.4);
     --accent-secondary: #89b4fa;
     /* secondary blue glow */
@@ -12,8 +9,6 @@
     --text-muted: #a6adc8;
     --border-width: 2px;
     --border-inactive: #313244;
-    /* Hyprland sharp/minimal rounding or no rounding. Let's do slight, modern rounding (10px) 
-       or completely sharp (0px). Let's go with 8px for a sharp-but-polished look. */
     --border-radius: 8px;
     --font-main: 'Outfit', sans-serif;
 }
@@ -31,7 +26,6 @@ body {
     font-family: var(--font-main);
     height: 100vh;
     overflow: hidden;
-    /* Solid, deep background */
     background: #11111b;
 }
 
@@ -39,7 +33,6 @@ body {
     height: 100%;
     width: 100%;
     padding: 16px;
-    /* slightly smaller padding for edge-to-edge feel */
 }
 
 /* App Main Wrapper */
@@ -234,6 +227,12 @@ body {
     align-items: center;
     background: #181825;
     /* Slightly lighter header */
+    cursor: grab;
+    user-select: none;
+}
+
+.module-header:active {
+    cursor: grabbing;
 }
 
 .module-content {

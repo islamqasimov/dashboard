@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 const CERT_PATH = "Certificates/";
 const SCROLL_SPEED = 0.5;
 
-export default function CertificatesModule() {
+export default function CertificatesModule({ dragProps }) {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const containerRef = useRef(null);
@@ -49,8 +49,34 @@ export default function CertificatesModule() {
         return () => cancelAnimationFrame(animationFrame.current);
     }, [loading, items]);
 
-    const handleTouchStart = () => { isPaused.current = true; };
+    const touchStartY = useRef(null);
+    const touchStartScroll = useRef(0);
+
+    const handleTouchStart = (e) => {
+        isPaused.current = true;
+        if (e.touches && e.touches.length > 0) {
+            touchStartY.current = e.touches[0].clientY;
+            touchStartScroll.current = scrollPos.current;
+        }
+    };
+
+    const handleTouchMove = (e) => {
+        if (touchStartY.current === null || !contentRef.current) return;
+
+        const delta = touchStartY.current - e.touches[0].clientY;
+        scrollPos.current = touchStartScroll.current + delta;
+
+        const totalHeight = contentRef.current.scrollHeight;
+        const halfHeight = totalHeight / 2;
+
+        if (scrollPos.current >= halfHeight) scrollPos.current -= halfHeight;
+        if (scrollPos.current < 0) scrollPos.current += halfHeight;
+
+        contentRef.current.style.transform = `translateY(-${scrollPos.current}px)`;
+    };
+
     const handleTouchEnd = () => {
+        touchStartY.current = null;
         setTimeout(() => { isPaused.current = false; }, 2000);
     };
 
@@ -77,7 +103,7 @@ export default function CertificatesModule() {
 
     return (
         <>
-            <div className="module-header">
+            <div className="module-header" {...dragProps}>
                 <span>Certificates</span>
                 <span style={{ fontSize: '10px', opacity: 0.5 }}>{items.length} Files</span>
             </div>
@@ -86,6 +112,7 @@ export default function CertificatesModule() {
                 className="cert-container"
                 style={{ overflow: 'hidden', height: '100%', position: 'relative' }}
                 onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
                 onWheel={handleWheel}
                 onMouseEnter={() => isPaused.current = true}

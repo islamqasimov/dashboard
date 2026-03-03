@@ -6,16 +6,12 @@ import GrafanaModule from './modules/GrafanaModule.jsx';
 
 export default function App() {
     // LAYOUT STATE
-    // 1. Column split (percentage)
     const [colSplit, setColSplit] = useState(50);
-    // 2. Row split for left column (percentage)
     const [leftRowSplit, setLeftRowSplit] = useState(50);
-    // 3. Row split for right column (percentage)
     const [rightRowSplit, setRightRowSplit] = useState(50);
 
     // MODULE SWAPPING STATE
-    // Array holds the string IDs. Index maps to visual quadrant:
-    // [0: Top-Left, 1: Bottom-Left, 2: Top-Right, 3: Bottom-Right]
+    // Array indices match visual quadrant: [0: Top-Left, 1: Bottom-Left, 2: Top-Right, 3: Bottom-Right]
     const [moduleOrder, setModuleOrder] = useState(['certs', 'board', 'grafana', 'media']);
     const [rearrangeMode, setRearrangeMode] = useState(false);
     const [selectedSlot, setSelectedSlot] = useState(null); // the index of the first tapped module
@@ -31,13 +27,44 @@ export default function App() {
 
     const [activeResizer, setActiveResizer] = useState(null);
 
+    // DRAG AND DROP SWAP LOGIC
+    const handleDragStart = (e, index) => {
+        if (rearrangeMode) {
+            e.preventDefault();
+            return;
+        }
+        e.dataTransfer.setData("text/plain", index);
+        e.dataTransfer.effectAllowed = "move";
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+    };
+
+    const handleDrop = (e, targetIndex) => {
+        e.preventDefault();
+        const sourceIndex = parseInt(e.dataTransfer.getData("text/plain"), 10);
+        if (!isNaN(sourceIndex) && sourceIndex !== targetIndex) {
+            const newOrder = [...moduleOrder];
+            const temp = newOrder[sourceIndex];
+            newOrder[sourceIndex] = newOrder[targetIndex];
+            newOrder[targetIndex] = temp;
+            setModuleOrder(newOrder);
+        }
+    };
+
     // MAP ID TO COMPONENT
-    const getModuleComponent = (id) => {
+    const getModuleComponent = (id, index) => {
+        const dragProps = {
+            draggable: !rearrangeMode,
+            onDragStart: (e) => handleDragStart(e, index)
+        };
         switch (id) {
-            case 'certs': return <CertificatesModule key="certs" />;
-            case 'board': return <BoardModule key="board" />;
-            case 'grafana': return <GrafanaModule key="grafana" />;
-            case 'media': return <MediaModule key="media" />;
+            case 'certs': return <CertificatesModule key="certs" dragProps={dragProps} />;
+            case 'board': return <BoardModule key="board" dragProps={dragProps} />;
+            case 'grafana': return <GrafanaModule key="grafana" dragProps={dragProps} />;
+            case 'media': return <MediaModule key="media" dragProps={dragProps} />;
             default: return null;
         }
     };
@@ -156,17 +183,17 @@ export default function App() {
         return () => document.head.removeChild(style);
     }, []);
 
-    // Render helper for a slot
     const renderSlot = (index) => {
         const isSelected = selectedSlot === index;
         return (
             <div
                 className={`module-panel fade-in ${rearrangeMode ? 'rearrange-active' : ''} ${isSelected ? 'selected' : ''}`}
                 onClick={() => handleSlotClick(index)}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, index)}
             >
-                {getModuleComponent(moduleOrder[index])}
+                {getModuleComponent(moduleOrder[index], index)}
 
-                {/* Swap Overlay */}
                 {rearrangeMode && (
                     <div className="swap-overlay">
                         {isSelected ? 'Select target to swap' : `Tap to swap`}
@@ -180,9 +207,10 @@ export default function App() {
         <div className="app-main-wrapper">
             {/* Top Bar for Controls */}
             <div className="top-bar">
-                <span className="brand">HyprDash OS</span>
+                <span className="brand">DASHBOARD</span>
                 <button
                     className={`rearrange-btn ${rearrangeMode ? 'active' : ''}`}
+                    style={{ display: 'none' }}
                     onClick={() => {
                         setRearrangeMode(!rearrangeMode);
                         setSelectedSlot(null);
