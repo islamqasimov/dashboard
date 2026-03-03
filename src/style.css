@@ -1,0 +1,335 @@
+:root {
+    --bg-dark: #09090b;
+    /* Very dark background */
+    --panel-bg: rgba(15, 15, 20, 0.85);
+    /* Dark solid-ish panels */
+    --accent: #cba6f7;
+    /* Hyprland standard purple/pink accent */
+    --accent-glow: rgba(203, 166, 247, 0.4);
+    --accent-secondary: #89b4fa;
+    /* secondary blue glow */
+    --text-main: #cdd6f4;
+    --text-muted: #a6adc8;
+    --border-width: 2px;
+    --border-inactive: #313244;
+    /* Hyprland sharp/minimal rounding or no rounding. Let's do slight, modern rounding (10px) 
+       or completely sharp (0px). Let's go with 8px for a sharp-but-polished look. */
+    --border-radius: 8px;
+    --font-main: 'Outfit', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-main);
+    height: 100vh;
+    overflow: hidden;
+    /* Solid, deep background */
+    background: #11111b;
+}
+
+#root {
+    height: 100%;
+    width: 100%;
+    padding: 16px;
+    /* slightly smaller padding for edge-to-edge feel */
+}
+
+/* App Main Wrapper */
+.app-main-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+/* HyprDash Top Bar */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0 16px 0;
+    flex-shrink: 0;
+}
+
+.brand {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--text-main);
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.rearrange-btn {
+    background: transparent;
+    border: 1px solid var(--border-inactive);
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+    font-family: var(--font-main);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.rearrange-btn:hover {
+    color: var(--text-main);
+    border-color: var(--text-main);
+}
+
+.rearrange-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 0 15px var(--accent-glow);
+}
+
+/* BSP Custom Container */
+.bsp-container {
+    flex: 1;
+    display: flex;
+    width: 100%;
+    min-height: 0;
+}
+
+.bsp-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-width: 0;
+}
+
+.bsp-cell {
+    width: 100%;
+    min-height: 0;
+    display: flex;
+    position: relative;
+}
+
+/* Touch-Friendly Thick Resizers */
+.bsp-resizer {
+    background: transparent;
+    position: relative;
+    z-index: 50;
+    transition: background 0.3s;
+}
+
+.bsp-resizer::after {
+    content: "";
+    position: absolute;
+    background: var(--border-inactive);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.bsp-resizer.active::after,
+.bsp-resizer:hover::after {
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.bsp-resizer-vertical {
+    width: 16px;
+    cursor: col-resize;
+    flex-shrink: 0;
+    margin: 0 4px;
+    /* Touch gap */
+}
+
+.bsp-resizer-vertical::after {
+    left: 7px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+}
+
+.bsp-resizer-horizontal {
+    height: 16px;
+    cursor: row-resize;
+    flex-shrink: 0;
+    margin: 4px 0;
+    /* Touch gap */
+}
+
+.bsp-resizer-horizontal::after {
+    top: 7px;
+    left: 0;
+    right: 0;
+    height: 2px;
+}
+
+
+/* Hyprland Panel Base */
+.module-panel {
+    background: var(--panel-bg);
+    border: var(--border-width) solid var(--border-inactive);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+}
+
+.module-panel:focus-within {
+    border-color: var(--text-muted);
+}
+
+/* Swap Mode Styling */
+.module-panel.rearrange-active {
+    cursor: pointer;
+    border-style: dashed;
+    border-color: var(--text-muted);
+}
+
+.module-panel.rearrange-active:hover {
+    border-color: var(--accent);
+    transform: scale(0.98);
+}
+
+.module-panel.selected {
+    border-color: var(--accent);
+    border-style: solid;
+    box-shadow: 0 0 20px var(--accent-glow);
+    transform: scale(0.95);
+    z-index: 100;
+}
+
+.swap-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 15, 20, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.2rem;
+    z-index: 200;
+    pointer-events: none;
+    /* Let clicks pass to the panel */
+}
+
+/* Headers */
+.module-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-inactive);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: var(--text-main);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #181825;
+    /* Slightly lighter header */
+}
+
+.module-content {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    background: #1e1e2e;
+}
+
+/* Scrollbar Styling (Minimal) */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-inactive);
+    border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+}
+
+/* Utility Animations */
+@keyframes windowOpen {
+    0% {
+        opacity: 0;
+        transform: scale(0.98) translateY(5px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.fade-in {
+    animation: windowOpen 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Canvas responsiveness */
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Video specific */
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hidden-controls {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    /* Invisible interactive layer */
+}
+
+/* Status Indicator for gestures */
+.status-indicator {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.status-indicator.visible {
+    opacity: 1;
+}
+
+/* Loading Spinner */
+.loader {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--accent);
+    animation: spin 1s linear infinite;
+    margin: auto;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "azrcl-dashboard",
+  "version": "1.0.0",
+  "description": "Node.js optimized dashboard with embedded Grafana",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "node server/index.js",
+    "dev:server": "node server/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "htm": "^3.1.1",
+    "dotenv": "^16.4.5",
+    "http-proxy-middleware": "^3.0.0",
+    "pdfjs-dist": "^3.11.174"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "@vitejs/plugin-react": "^4.2.0"
+  }
+}
