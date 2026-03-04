@@ -1,11 +1,10 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import dotenv from 'dotenv';
-import { createProxyMiddleware } from 'http-proxy-middleware';
-
 // Load .env file
 dotenv.config();
 
@@ -25,34 +24,14 @@ const ALLOWED_EXTENSIONS_VIDEO = new Set(['.mp4', '.webm', '.ogg', '.mov']);
 const MEDIA_EXTENSIONS = new Set([...ALLOWED_EXTENSIONS_IMG, ...ALLOWED_EXTENSIONS_PDF, ...ALLOWED_EXTENSIONS_VIDEO]);
 
 // Middleware
-app.use(cors());
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+}));
+app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:3000'] }));
 app.use(express.static(path.join(__dirname, '../dist')));
 app.use(`/${CERT_FOLDER}`, express.static(CERT_FOLDER));
 app.use(`/${VIDEO_FOLDER}`, express.static(VIDEO_FOLDER));
-
-// Proxy Middleware for embedding Grafana (strips X-Frame-Options)
-app.use('/proxy', (req, res, next) => {
-  const targetUrl = req.query.url;
-
-  if (!targetUrl) {
-    return res.status(400).send('Missing url parameter');
-  }
-
-  // Set up proxy middleware on the fly for the requested URL
-  const proxy = createProxyMiddleware({
-    target: targetUrl,
-    changeOrigin: true,
-    ws: true,
-    ignorePath: true, // we want to proxy precisely what's specified, or we'd just map /proxy to the target root
-    onProxyRes: function (proxyRes) {
-      // Strip headers that prevent iframe embedding
-      delete proxyRes.headers['x-frame-options'];
-      delete proxyRes.headers['content-security-policy'];
-    }
-  });
-
-  return proxy(req, res, next);
-});
 
 // Caching middleware
 app.use((req, res, next) => {
@@ -84,7 +63,8 @@ app.get('/api/certificates', (req, res) => {
       .sort();
     res.json(files);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error in /api/certificates:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -99,7 +79,8 @@ app.get('/api/videos', (req, res) => {
       .sort();
     res.json(files);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error in /api/videos:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -115,6 +96,5 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`   http://localhost:${PORT}`);
   console.log(`   API: /api/certificates`);
   console.log(`   API: /api/videos`);
-  console.log(`   Proxy: /proxy?url=YOUR_URL`);
   console.log('='.repeat(60));
 });

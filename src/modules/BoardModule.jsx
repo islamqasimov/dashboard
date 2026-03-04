@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function BoardModule({ dragProps }) {
     // Vite requires the VITE_ prefix for client-accessible environment variables
-    const excelUrl = import.meta.env.VITE_EXCEL_URL || defaultUrl;
+    const excelUrl = import.meta.env.VITE_EXCEL_URL || "";
 
     return (
         <>
