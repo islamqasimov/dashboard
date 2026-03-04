@@ -5,18 +5,11 @@ export default function GrafanaModule({ dragProps }) {
     const grafanaUrl = import.meta.env.VITE_GRAFANA_URL || "";
     const isEnabled = grafanaUrl.length > 0;
 
-    // Build the proxy URL if there's a target URL. Appends &kiosk or ?kiosk for Grafana dashboards.
-    let proxyUrl = "";
-    if (isEnabled) {
-        const urlWithKiosk = grafanaUrl.includes('?') ? `${grafanaUrl}&kiosk` : `${grafanaUrl}?kiosk`;
-        proxyUrl = `/proxy?url=${encodeURIComponent(urlWithKiosk)}`;
-    }
-
     return (
         <>
             <div className="module-header" {...dragProps}>
                 <span>Web Embed</span>
-                <span style={{ fontSize: '10px', opacity: 0.5 }}>{isEnabled ? 'Grafana / URL Proxy' : 'Disabled'}</span>
+                <span style={{ fontSize: '10px', opacity: 0.5 }}>{isEnabled ? 'Grafana' : 'Disabled'}</span>
             </div>
             <div className="module-content" style={{ background: '#000', position: 'relative' }}>
                 {isEnabled ? (
@@ -27,12 +20,13 @@ export default function GrafanaModule({ dragProps }) {
                             </div>
                         )}
                         <iframe
-                            src={proxyUrl}
+                            src={grafanaUrl}
                             width="100%"
                             height="100%"
                             style={{ border: 'none', background: '#fff', opacity: loading ? 0 : 1, transition: 'opacity 0.3s' }}
                             title="Grafana Embed"
                             onLoad={() => setLoading(false)}
+                            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; geolocation; microphone; camera; midi"
                         />
                     </>
                 ) : (

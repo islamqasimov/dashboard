@@ -1,8 +1,6 @@
 import React from 'react';
 
 export default function BoardModule({ dragProps }) {
-    const defaultUrl = "https://azercell365-my.sharepoint.com/personal/nhuseynli_azercell_com/_layouts/15/Doc.aspx?sourcedoc={d46f4128-8eea-495e-a52b-e83fbec17cbd}&action=embedview&wdAllowInteractivity=False&wdHideGridlines=True&wdHideHeaders=True&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True";
-
     // Vite requires the VITE_ prefix for client-accessible environment variables
     const excelUrl = import.meta.env.VITE_EXCEL_URL || defaultUrl;
 

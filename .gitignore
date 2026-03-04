@@ -1,0 +1,18 @@
+# Environment Config
+.env
+.env.*
+
+# Dependencies
+node_modules/
+
+# Media & Resources
+Certificates/
+Videos/
+archive/
+
+# Build
+dist/
+
+# Logs
+server.log
+*.log
