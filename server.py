@@ -116,6 +116,3 @@ def run_server(port=8000):
 
 if __name__ == '__main__':
     run_server(port=8000)
-
-#https://sdgrafana.azercell.com/public-dashboards/545446df6dfe466bb5d73a2b7c2dac6c
-

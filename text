@@ -1,0 +1,4 @@
+# Port for the Node.js Server (Default: 8000)
+PORT=8000
+VITE_GRAFANA_URL=https://sdgrafana.azercell.com/public-dashboards/545446df6dfe466bb5d73a2b7c2dac6c
+VITE_EXCEL_URL=https://azercell365-my.sharepoint.com/personal/nhuseynli_azercell_com/_layouts/15/Doc.aspx?sourcedoc=%7Bd46f4128-8eea-495e-a52b-e83fbec17cbd%7D&action=embedview&wdAllowInteractivity=False&wdHideGridlines=True&wdHideHeaders=True&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True
