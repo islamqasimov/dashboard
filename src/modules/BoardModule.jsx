@@ -1,8 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function BoardModule({ dragProps }) {
     // Vite requires the VITE_ prefix for client-accessible environment variables
-    const excelUrl = import.meta.env.VITE_EXCEL_URL || "";
+    const [excelUrl, setExcelUrl] = useState(import.meta.env.VITE_EXCEL_URL || "");
+
+    useEffect(() => {
+        fetch('/api/config')
+            .then(res => res.json())
+            .then(data => {
+                if (data.VITE_EXCEL_URL !== undefined) {
+                    setExcelUrl(data.VITE_EXCEL_URL);
+                }
+            })
+            .catch(err => console.error("Error fetching config:", err));
+    }, []);
 
     return (
         <>

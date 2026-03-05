@@ -52,6 +52,14 @@ app.use((req, res, next) => {
   }
 });
 
+// API: Config
+app.get('/api/config', (req, res) => {
+  res.json({
+    VITE_GRAFANA_URL: process.env.VITE_GRAFANA_URL || "",
+    VITE_EXCEL_URL: process.env.VITE_EXCEL_URL || ""
+  });
+});
+
 // API: Certificates
 app.get('/api/certificates', (req, res) => {
   try {

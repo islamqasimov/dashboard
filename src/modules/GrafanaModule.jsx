@@ -1,8 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function GrafanaModule({ dragProps }) {
     const [loading, setLoading] = useState(true);
-    const grafanaUrl = import.meta.env.VITE_GRAFANA_URL || "";
+    const [grafanaUrl, setGrafanaUrl] = useState(import.meta.env.VITE_GRAFANA_URL || "");
+
+    useEffect(() => {
+        fetch('/api/config')
+            .then(res => res.json())
+            .then(data => {
+                if (data.VITE_GRAFANA_URL !== undefined) {
+                    setGrafanaUrl(data.VITE_GRAFANA_URL);
+                }
+            })
+            .catch(err => console.error("Error fetching config:", err));
+    }, []);
+
     const isEnabled = grafanaUrl.length > 0;
 
     return (
